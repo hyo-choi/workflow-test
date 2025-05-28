@@ -20,10 +20,7 @@ jobs:
           JOINED_TICKET_IDS=()
 
           commit_messages='${{ toJson(github.event.commits.*.message) }}'
-          while IFS= read -r commit; do
-            message=$(echo "$commit" | jq -r '.message')
-            echo "Processing: $message"
-            
+          while IFS= read -r message; do
             if [[ "$message" =~ AAA-[0-9]+ ]]; then
               ticket_id="${BASH_REMATCH[0]}"
               TICKET_IDS+=("$ticket_id")
