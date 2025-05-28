@@ -10,7 +10,8 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - run: echo "${{ github.event.pull_request.base }}"
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Get JIRA Ticket ID List
         run: |
           TICKET_IDS=()
