@@ -19,17 +19,16 @@ jobs:
           TICKET_IDS=()
           JOINED_TICKET_IDS=()
 
-          commits='${{ toJson(github.event.commits) }}'
+          commit_messages='${{ toJson(github.event.commits.*.message) }}'
           # JSON 배열을 파싱하여 각 메시지 처리
-          echo "$commits" | jq -c '.[]' | while IFS= read -r commit; do
-            message=$(echo "$commit" | jq -r '.message')
-            distinct=$(echo "$commit" | jq -r '.distinct')
-            echo "$message $distinct"
+          echo "$commit_messages" | jq -r '.[]' | while IFS= read -r message; do
             if [[ "$message" =~ AAA-[0-9]+ ]]; then
               ticket_id="${BASH_REMATCH[0]}"
               TICKET_IDS+=("$ticket_id")
             fi
           done
+
+          echo "TICKET_IDS: ${{ toJson(TICKET_IDS) }}"
 
           # 쉼표를 추가하여 새 배열에 추가, 마지막은 제외
           for ((i = 0; i < ${#TICKET_IDS[@]}; i++)); do
