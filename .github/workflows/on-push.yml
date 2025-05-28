@@ -26,7 +26,7 @@ jobs:
               TICKET_IDS+=("$ticket_id")
               echo "Found ticket: $ticket_id (Array size: ${#TICKET_IDS[@]})"
             fi
-          done < <(echo "$commits" | jq -c '.[]')
+          done < <(echo "$commit_messages" | jq -c '.[]')
 
           echo "TICKET_IDS: ${#TICKET_IDS[@]}"
 
