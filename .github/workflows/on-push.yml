@@ -1,0 +1,33 @@
+name: On Push
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - production
+
+
+jobs:
+  get-commit-list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Get JIRA Ticket ID List
+        run: |
+          TICKET_IDS=()
+          JOINED_TICKET_IDS=()
+
+          commit_messages='${{ toJson(github.event.commits.*.message) }}'
+          while IFS= read -r message; do
+            if [[ "$message" =~ AAA-[0-9]+ ]]; then
+              ticket_id="${BASH_REMATCH[0]}"
+              TICKET_IDS+=("$ticket_id")
+            fi
+          done < <(echo "$commit_messages" | jq -c '.[]')
+
+          IFS=", "
+          echo "----JIRA Ticket ID List----"
+          echo "Found ticket ID: ${TICKET_IDS[*]}"
+
