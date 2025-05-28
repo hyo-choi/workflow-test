@@ -19,20 +19,9 @@ jobs:
           TICKET_IDS=()
           JOINED_TICKET_IDS=()
 
-          git fetch origin ${{ github.base_ref }}
-          echo "---base_branch fetch Done---"
-          git fetch origin ${{ github.head_ref }}
-          echo "---pr_branch fetch Done---"
-
-          base_branch="${{ github.base_ref }}"
-          pr_branch="${{ github.head_ref }}"
-          echo "base_branch=$base_branch"
-          echo "pr_branch=$pr_branch"
-
-          # PR에 올라온 모든 commit history의 message를 확인해 지라 티켓 ID를 추출합니다.
-          commit_messages=$(git log --pretty=format:"%s" origin/"$base_branch"..origin/"$pr_branch")
-          IFS=$'\n'
-          for line in $commit_messages; do
+          commit_messages='${{ toJson(github.event.commits.*.message) }}'
+          # JSON 배열을 파싱하여 각 메시지 처리
+          echo "$commit_messages" | jq -r '.[]' | while IFS= read -r line; do
             if [[ "$line" =~ AAA-[0-9]+ ]]; then
               ticket_id="${BASH_REMATCH[0]}"
               TICKET_IDS+=("$ticket_id")
