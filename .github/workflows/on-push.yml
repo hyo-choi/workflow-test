@@ -21,6 +21,7 @@ jobs:
 
           commit_messages='${{ toJson(github.event.commits.*.message) }}'
           # JSON 배열을 파싱하여 각 메시지 처리
+          IFS=$'\n'
           echo "$commit_messages" | jq -r '.[]' | while IFS= read -r message; do
             echo "message: $message" 
             if [[ "$message" =~ AAA-[0-9]+ ]]; then
@@ -30,8 +31,7 @@ jobs:
             fi
           done
 
-          IFS=", "
-          echo "TICKET_IDS: ${TICKET_IDS[*]}"
+          echo "TICKET_IDS: ${TICKET_IDS[@]}"
 
           # 쉼표를 추가하여 새 배열에 추가, 마지막은 제외
           for ((i = 0; i < ${#TICKET_IDS[@]}; i++)); do
