@@ -6,16 +6,11 @@ on:
       - closed
 
 jobs:
-  check-if-PR-is-merged:
+  get-commit-list:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    outputs:
-      isMerged: ${{ steps.check-if-PR-is-merged.outputs.isMerged }}
-  get-commit-list:
-    needs: check-if-PR-is-merged
-    if: needs.check-if-PR-is-merged.outputs.isMerged == true
-    runs-on: ubuntu-latest
     steps:
+      - run: echo "${{ github.event.pull_request.base }}"
       - name: Get JIRA Ticket ID List
         run: |
           TICKET_IDS=()
