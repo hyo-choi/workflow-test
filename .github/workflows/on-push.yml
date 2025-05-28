@@ -26,7 +26,7 @@ jobs:
             if [[ "$message" =~ AAA-[0-9]+ ]]; then
               ticket_id="${BASH_REMATCH[0]}"
               TICKET_IDS+=("$ticket_id")
-              echo "ticket_id: $ticket_id"
+              echo "ticket_id: $ticket_id ${#TICKET_IDS[@]}"
             fi
           done
 
