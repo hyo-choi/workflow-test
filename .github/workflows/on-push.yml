@@ -21,7 +21,7 @@ jobs:
 
           commits='${{ toJson(github.event.commits) }}'
           # JSON 배열을 파싱하여 각 메시지 처리
-          echo "$commits" | jq -c '.[]' | while IFS= read -r ; do
+          echo "$commits" | jq -c '.[]' | while IFS= read -r commit; do
             message=$(echo "$commit" | jq -r '.message')
             distinct=$(echo "$commit" | jq -r '.distinct')
             echo "$message $distinct"
