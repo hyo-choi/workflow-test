@@ -20,15 +20,16 @@ jobs:
           JOINED_TICKET_IDS=()
 
           commit_messages='${{ toJson(github.event.commits.*.message) }}'
-          # JSON 배열을 파싱하여 각 메시지 처리
-          IFS=$'\n'
-          echo "$commit_messages" | jq -r '.[]' | while IFS= read -r message; do
+          while IFS= read -r commit; do
+            message=$(echo "$commit" | jq -r '.message')
+            echo "Processing: $message"
+            
             if [[ "$message" =~ AAA-[0-9]+ ]]; then
               ticket_id="${BASH_REMATCH[0]}"
               TICKET_IDS+=("$ticket_id")
-              echo "${#TICKET_IDS[@]}"
+              echo "Found ticket: $ticket_id (Array size: ${#TICKET_IDS[@]})"
             fi
-          done
+          done < <(echo "$commits" | jq -c '.[]')
 
           echo "TICKET_IDS: ${#TICKET_IDS[@]}"
 
