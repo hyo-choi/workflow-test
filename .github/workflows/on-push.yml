@@ -28,7 +28,7 @@ jobs:
             fi
           done
 
-          echo "TICKET_IDS: ${{ toJson(TICKET_IDS[@]) }}"
+          echo "TICKET_IDS: ${TICKET_IDS[@]}"
 
           # 쉼표를 추가하여 새 배열에 추가, 마지막은 제외
           for ((i = 0; i < ${#TICKET_IDS[@]}; i++)); do
