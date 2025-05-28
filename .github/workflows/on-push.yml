@@ -1,0 +1,50 @@
+name: On Push
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - production
+
+
+jobs:
+  get-commit-list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Get JIRA Ticket ID List
+        run: |
+          TICKET_IDS=()
+          JOINED_TICKET_IDS=()
+
+          commits='${{ toJson(github.event.commits) }}'
+          # JSON 배열을 파싱하여 각 메시지 처리
+          echo "$commits" | jq -c '.[]' | while IFS= read -r commit; do
+            message=$(echo "$commit" | jq -r '.message')
+            distinct=$(echo "$commit" | jq -r '.distinct')
+            echo "$message $distinct"
+            if [[ "$message" =~ AAA-[0-9]+ ]]; then
+              ticket_id="${BASH_REMATCH[0]}"
+              TICKET_IDS+=("$ticket_id")
+            fi
+          done
+
+          # 쉼표를 추가하여 새 배열에 추가, 마지막은 제외
+          for ((i = 0; i < ${#TICKET_IDS[@]}; i++)); do
+            if [ $i -eq $((${#TICKET_IDS[@]} - 1)) ]; then
+              JOINED_TICKET_IDS+=("${TICKET_IDS[i]}")
+            else
+              JOINED_TICKET_IDS+=("${TICKET_IDS[i]},")
+            fi
+          done
+
+          echo "-----For done----"
+
+          # 추출된 모든 티켓 ID들을 출력합니다.
+          echo "----JIRA Ticket ID List----"
+          for ticket_id in "${JOINED_TICKET_IDS[@]}"; do
+            echo "Found ticket ID: $ticket_id"
+          done
+
