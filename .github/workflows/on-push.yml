@@ -1,13 +1,15 @@
-name: On Pull Request Merged
+name: On Push
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - main
+      - staging
+      - production
+
 
 jobs:
   get-commit-list:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
